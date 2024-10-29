@@ -169,3 +169,7 @@ Se o comando for '1', o LED é ligado e uma mensagem de confirmação é enviada
 Se o comando for '0', o LED é desligado e uma mensagem de confirmação é enviada.
 Se o comando não for reconhecido, uma mensagem de erro é enviada ao cliente.
 Essa lógica permite que o usuário controle o LED do ESP8266 através de uma interface Telnet, proporcionando um método simples e eficiente de interação com o dispositivo pela rede.
+
+
+NOS NÃO CONSEGUIMOS POR QUESTÃO DE ESTA USANDO W11
+MAS TENHO CERTEZA QUE VOCÊ CONSEGUE :)
