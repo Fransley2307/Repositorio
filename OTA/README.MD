@@ -1,68 +1,87 @@
+cpp
+#include <Arduino.h> 
+#include <ESP8266WiFi.h> 
+#include <ArduinoOTA.h> 
+O include são as bibliotecas do arduino ESP8266 e é utilizado para atualizar o OTA
 
-#include <Arduino.h> /Biblioteca padrão do Arduino/
-#include <ESP8266WiFi.h> /Biblioteca para conectar o WIFI do ESP8266/
-#include <ArduinoOTA.h> /Biblioteca para atualizar o OTA/
 
-const char* ssid = "iPhoneFransley"; /*Ele ira configurar as redes do wifi */
+ cpp
+const char* ssid = "iPhoneFransley"; 
 const char* password = "Fransley.2002";
+Nesste trecho ele ira configurar a rede de wifi
 
+
+ cpp
 void setup(){
-  Serial.begin(9600); /inicia a comunicação/
+  Serial.begin(9600); 
+Inicia a comunicação 
 
-  WiFi.mode(WIFI_STA); /Configura o ESP como um cliente WIFI/
-  WiFi.begin(ssid, password); /aqui inicia a conexão WIFI com login e senha fornecidos antes/
+  
+ cpp 
+  WiFi.mode(WIFI_STA); 
+  WiFi.begin(ssid, password); 
+Faz a configuração do ESP como um cliente wifi w inicia a conexão usando o login e senha do wifi
 
-  while (WiFi.waitForConnectResult() != WL_CONNECTED){ /Tenta fazer a conexão/
-    Serial.println("Conexão falho! Rebooting.."); /Mensagem de erro/
-    WiFi.begin(ssid, password);; /Tenta novamente fazer a conexão/
-    delay(5000); /* Coloca um delay de 5 segundos para fazer a proxima tentativa*/
+  
+ cpp
+  while (WiFi.waitForConnectResult() != WL_CONNECTED){ 
+    Serial.println("Conexão falho! Rebooting.."); 
+    WiFi.begin(ssid, password);; 
+    delay(5000); 
   }  
+Neste trecho ele tenta realizar a conexão duas vezes e coloca um delay de 5 segundos para realizar a proxima tentativa, se cazo não funcionar aparece a mensagem de erro de conexão.
 
+  
+cpp
   ArduinoOTA.onStart([] (){
-    Serial.println("Start"); /Imprime a mensagem START na serial/
+    Serial.println("Start"); 
   });
+Aqui ele imprime a mensagem START na serial
 
+
+cpp
   ArduinoOTA.onEnd([] (){
-    Serial.println("\nEnd"); /Imprime a mensagem END na serial/
+    Serial.println("\nEnd"); 
   });
+Imprime a mensagem END na serial.
 
-  ArduinoOTA.onProgress([] (unsigned int progress, unsigned int total){ /executado durante a atualização na serial/
-    Serial.printf("Progress: %u%% \r", (progress / (total / 100))); /Imprime o progresso da atuaização/
+  
+cpp
+  ArduinoOTA.onProgress([] (unsigned int progress, unsigned int total){ /*executado durante a atualização na serial*/
+    Serial.printf("Progress: %u%% \r", (progress / (total / 100))); /*Imprime o progresso da atuaização*/
   });
+  Primeira parte do codigo ele é executado durante a atualização na serial e depois imprime o progresso dela
+  
 
-  ArduinoOTA.onError([] (ota_error_t error){ /Vai ser utilizado quando tiver algum erro durante a atualização da OTA/
-      Serial.printf("Error [%u]: ", error); /Imprime o codigo de ERRO/
-      if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed"); /Irá imprimir a mensagem de erro na parte do codigo onde apresentar o erro/
-      else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed"); /Vai verificar se o erro foi na atualização da OTA e imprime Begin ERROR/
-      else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed"); /Verifica se o erro foi na conexão para fazer a atualização e imprime OTA_CONNECT_ERROR/
-      else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed"); /Verifica se o erro foi ao receber os dados da atualização e imprime Recive Failed/
+  
+cpp
+  ArduinoOTA.onError([] (ota_error_t error){ /*Vai ser utilizado quando tiver algum erro durante a atualização da OTA*/
+      Serial.printf("Error [%u]: ", error); /*Imprime o codigo de ERRO*/
+      if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed"); /*Irá imprimir a mensagem de erro na parte do codigo onde apresentar o erro*/
+      else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed"); /*Vai verificar se o erro foi na atualização da OTA e imprime Begin ERROR*/
+      else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed"); /*Verifica se o erro foi na conexão para fazer a atualização e imprime OTA_CONNECT_ERROR*/
+      else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed"); /*Verifica se o erro foi ao receber os dados da atualização e imprime Recive Failed*/
       
     
   });
-  ArduinoOTA.begin(); /Vai iniciar o serviço ArduinoOTA/
-  Serial.println("Pronto"); /Imprime Pronto na serial/
-  Serial.print("IP: "); /Vai imprimir IP na serial/
-  Serial.println(WiFi.localIP()); /Imprime o endereço IP local do ESP na serial/
+Em caso de erro durante a atualização OTA, imprime o código e a mensagem de erro correspondente, indicando se o problema ocorreu no início Begin ERROR, na conexão OTA_CONNECT_ERROR ou no recebimento dos dados Recive Failed.
+
+
+
+
+ cpp
+  ArduinoOTA.begin(); /*Vai iniciar o serviço ArduinoOTA*/
+  Serial.println("Pronto"); /*Imprime Pronto na serial*/
+  Serial.print("IP: "); /*Vai imprimir IP na serial*/
+  Serial.println(WiFi.localIP()); /*Imprime o endereço IP local do ESP na serial*/
 
 }
+Depois de iniciar o serviço ArduinoOTA, imprime-se "Pronto" e o endereço IP local do ESP na serial.
 
-void loop(){        /o codigo vai permitir atualizar o firmware do ESP8266 à distancia, não precisando usar o cabo (fisio)/
+
+
+cpp
+void loop(){        
   ArduinoOTA.handle();
 }
-
-PLATFORMIO.INI
-
-; PlatformIO Project Configuration File
-;
-;   Build options: build flags, source filter
-;   Upload options: custom upload port, speed and extra flags
-;   Library options: dependencies, extra library storages
-;   Advanced options: extra scripting
-;
-; Please visit documentation for the other options and examples
-; https://docs.platformio.org/page/projectconf.html
-
-[env:nodemcuv2] ; define um ambiente permitindo configurar varias builds para o mesmo projeto usando o nodemcuv2
-platform = espressif8266 ; especifica que o projeto é para um microcontrolador com shipset ESP8266
-board = nodemcuv2 ; indica qaul placa de desenvolvimento está sendo usada, a nomenclatura nodemcuv2 refere-se ao módulo NodeMCU v2
-framework = arduino ; indica que o projeto usará a framework Arduino com base no shipset ESP8266
+o codigo vai permitir atualizar o firmware do ESP8266 à distancia, não precisando usar o cabo (fisio)
